@@ -16,6 +16,7 @@
 #include <stdio.h>
 
 #include "ot.h"
+#include <openthread/udp.h>
 
 int main(void)
 {
@@ -25,6 +26,6 @@ int main(void)
     uint16_t panid = 0;
     uint8_t res = ot_call_command("panid", NULL, (void*)&panid);
     printf("Current panid: 0x%x (res:%x)\n", panid, res);
-
+	HELLO
     return 0;
 }
