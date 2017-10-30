@@ -4,10 +4,10 @@ APPLICATION = openthread
 BOARD ?= hamilton
 
 # These are the boards that OpenThread stack has been tested on
-BOARD_WHITELIST := hamilton samr21-xpro iotlab-m3 fox iotlab-a8-m3
+#BOARD_WHITELIST := hamilton samr21-xpro iotlab-m3 fox iotlab-a8-m3
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE = /home/hskim/Desktop/RIOT-OS
+RIOTBASE = /home/billy/Research/RIOT-OS
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
