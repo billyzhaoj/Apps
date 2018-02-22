@@ -7,7 +7,7 @@ BOARD ?= samr21-xpro
 BOARD_WHITELIST := hamilton samr21-xpro iotlab-m3 fox iotlab-a8-m3
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE = /home/hskim/Desktop/RIOT-OS
+RIOTBASE = /root/RIOT-OS
 
 # This is to set the proper programmer for board
 PROGRAMMER ?= jlink
@@ -32,11 +32,11 @@ OPENTHREAD_UART_BAUDRATE ?= 115200
 CFLAGS += -DOPENTHREAD_UART_BAUDRATE=${OPENTHREAD_UART_BAUDRATE}
 OPENTHREAD_PANID ?= 0xbeef
 OPENTHREAD_CHANNEL ?= 26
-OPENTHREAD_TXPOWER ?= 4
+OPENTHREAD_TXPOWER ?= 0
 CFLAGS += -DOPENTHREAD_PANID=${OPENTHREAD_PANID}
 CFLAGS += -DOPENTHREAD_CHANNEL=${OPENTHREAD_CHANNEL}
 CFLAGS += -DOPENTHREAD_TXPOWER=${OPENTHREAD_TXPOWER}
-HOSTNAME ?= 17
+HOSTNAME ?= 10
 CFLAGS += -DOPENTHREAD_SOURCE=${HOSTNAME}
 
 ifneq (,$(filter hamilton samr21-xpro,$(BOARD)))

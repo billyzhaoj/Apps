@@ -7,7 +7,7 @@ APPLICATION = openthread
 BOARD_WHITELIST := hamilton samr21-xpro iotlab-m3 fox iotlab-a8-m3
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE = /home/hskim/Desktop/RIOT-OS
+RIOTBASE = /root/RIOT-OS
 
 # This is to set the proper programmer for board
 PROGRAMMER ?= jlink
@@ -33,15 +33,15 @@ else
     # ftd: A Full Thread Device has router functionality compiled in
     USEMODULE += openthread-ftd
     USEMODULE += openthread-cli-ftd
-    #BOARD ?= samr21-xpro
-    BOARD ?= hamilton
-    CFLAGS += -DCLOCK_USE_PLL=1
+    BOARD ?= samr21-xpro
+    #BOARD ?= hamilton
+    #CFLAGS += -DCLOCK_USE_PLL=1
 endif
 
 #Define PANID, CHANNEL, TXPOWER, and UART_BAUDRATE used by default
 OPENTHREAD_PANID ?= 0xbeef
 OPENTHREAD_CHANNEL ?= 26
-OPENTHREAD_TXPOWER ?= 4
+OPENTHREAD_TXPOWER ?= 0
 OPENTHREAD_UART_BAUDRATE ?= 115200
 
 CFLAGS += -DOPENTHREAD_PANID=${OPENTHREAD_PANID}
