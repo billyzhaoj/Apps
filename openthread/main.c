@@ -55,6 +55,7 @@ uint64_t radioOnTime = 0;
 uint64_t radioOffTime = 0;
 #endif
 
+uint32_t packetReTxArray[11];
 uint32_t packetReTxCnt = 0;
 uint32_t packetSuccessCnt = 0;
 uint32_t packetFailCnt = 0;
@@ -104,6 +105,10 @@ static kernel_pid_t _main_pid;
 int main(void)
 {
     _main_pid = thread_getpid();
+
+    for(int i=0; i<11; i++) {
+        packetReTxArray[i] = 0;
+    }
 
 #if DMAC_ENABLE
     dmac_init();

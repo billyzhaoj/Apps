@@ -36,6 +36,7 @@ uint64_t radioOnTime = 0;
 uint64_t radioOffTime = 0;
 #endif
 
+uint32_t packetReTxArray[11];
 uint32_t packetReTxCnt = 0;
 uint32_t packetSuccessCnt = 0;
 uint32_t packetFailCnt = 0;
@@ -91,6 +92,10 @@ uint32_t interval_with_jitter(void)
 
 int main(void)
 {
+    for(int i=0; i<11; i++) {
+        packetReTxArray[i] = 0;
+    }
+
     /* Run wpantund to interact with NCP */
     DEBUG("This a test for OpenThread NCP\n");    
     xtimer_usleep(200000000ul);
