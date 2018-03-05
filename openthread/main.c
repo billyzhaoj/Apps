@@ -31,7 +31,7 @@
 #define SAMPLE_JITTER   SAMPLE_INTERVAL/2
 #define PAYLOAD_SIZE (75)
 
-#define ENABLE_DEBUG (1)
+#define ENABLE_DEBUG (0)
 #include "debug.h"
 
 uint32_t interval_with_jitter(void)
@@ -97,6 +97,13 @@ static otMessage *message = NULL;
 
 static kernel_pid_t _main_pid;
 
+xtimer_t end_timer;
+
+static void end_timer_cb(void* arg) {
+    printf("END\n");
+    while(1){}
+}
+
 /*void otUdpReceive(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo) {
     msg_t msg;
     msg_send(&msg, _main_pid);
@@ -105,6 +112,8 @@ static kernel_pid_t _main_pid;
 int main(void)
 {
     _main_pid = thread_getpid();
+
+    end_timer.callback = end_timer_cb;
 
     for(int i=0; i<11; i++) {
         packetReTxArray[i] = 0;
@@ -117,7 +126,7 @@ int main(void)
     spi_set_dma_channel(0,DMAC_CHANNEL_SPI_TX,DMAC_CHANNEL_SPI_RX);
 #endif 
     DEBUG("This a test for OpenThread\n");    
-    xtimer_usleep(200000000ul);
+    xtimer_usleep(120000000ul);
 
     DEBUG("\n[Main] Start UDP\n");
 	otError error;
@@ -137,24 +146,29 @@ int main(void)
     for (int i = 0; i < PAYLOAD_SIZE; i++) {
         buf[i] = 0x0;
     }
+    
+    xtimer_set(&end_timer, 60000000ul);
+    uint32_t last_wakeup = xtimer_now_usec();
+    uint32_t now = xtimer_now_usec();
+    cpuOnTime = 0;
+    cpuOffTime = 0;
 
     while (1) {
 		//Sample
 	    //sample(&frontbuf);
 
 		//Sleep
-        xtimer_usleep(interval_with_jitter());        
+        //xtimer_usleep(interval_with_jitter());        
+        now = xtimer_now_usec();
+        if (now - last_wakeup < SAMPLE_INTERVAL) {
+            xtimer_usleep(SAMPLE_INTERVAL - (now-last_wakeup));
+        }
+        last_wakeup = xtimer_now_usec();
 
         /* Identity */
         buf[0] = source;
         buf[2] = myRloc & 0xff;
         buf[1] = (myRloc >> 8) & 0xff;
-
-        /* Sequence Number */
-        buf[4]++;
-        if (buf[4] == 0) {
-            buf[3]++;
-        }
 
 #ifdef CPU_DUTYCYCLE_MONITOR
         /* context switch */
@@ -291,7 +305,6 @@ int main(void)
         buf[71] = (totalSerialMsgCnt >> 24) & 0xff;
 
 		// Generate a packet
-        mutex_lock(openthread_get_buffer_mutex());
         message = otUdpNewMessage(openthread_get_instance(), true);
         if (message == NULL) {
             DEBUG("error in new message");
@@ -300,10 +313,14 @@ int main(void)
             if (error != OT_ERROR_NONE) {
                 DEBUG("error in set length\n");
             } else {
+                /* Sequence Number */
+                buf[4]++;
+                if (buf[4] == 0) {
+                    buf[3]++;
+                }
                 otMessageWrite(message, 0, buf, PAYLOAD_SIZE);
             }
         }
-        mutex_unlock(openthread_get_buffer_mutex());
 
         // Send a packet
         if (message != NULL) {

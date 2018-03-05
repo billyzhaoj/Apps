@@ -20,7 +20,7 @@
 #include <openthread/openthread.h>
 #include "sched.h"
 
-#define ENABLE_DEBUG (1)
+#define ENABLE_DEBUG (0)
 #include "debug.h"
 
 uint16_t myRloc = 0;
@@ -98,7 +98,7 @@ int main(void)
 
     /* Run wpantund to interact with NCP */
     DEBUG("This a test for OpenThread NCP\n");    
-    xtimer_usleep(200000000ul);
+    xtimer_usleep(120000000ul);
 
     DEBUG("\n[Main] Start UDP\n");
 	otError error;
@@ -116,6 +116,9 @@ int main(void)
         buf[i] = 0x0;
     }
 
+    cpuOnTime = 0;
+    cpuOffTime = 0;
+
     while (1) {
 		//Sleep
         xtimer_usleep(interval_with_jitter());        
@@ -124,12 +127,6 @@ int main(void)
         buf[0] = source;
         buf[2] = myRloc & 0xff;
         buf[1] = (myRloc >> 8) & 0xff;
-
-        /* Sequence Number */
-        buf[4]++;
-        if (buf[4] == 0) {
-            buf[3]++;
-        }
 
 #ifdef CPU_DUTYCYCLE_MONITOR
         /* context switch */
@@ -266,7 +263,6 @@ int main(void)
         buf[71] = (totalSerialMsgCnt >> 24) & 0xff;
 
 		//Send
-        mutex_lock(openthread_get_buffer_mutex());
         message = otUdpNewMessage(openthread_get_instance(), true);
         if (message == NULL) {
             DEBUG("error in new message");
@@ -275,10 +271,14 @@ int main(void)
             if (error != OT_ERROR_NONE) {
                 DEBUG("error in set length\n");
             } else {
+                /* Sequence Number */
+                buf[4]++;
+                if (buf[4] == 0) {
+                    buf[3]++;
+                }
                 otMessageWrite(message, 0, buf, PAYLOAD_SIZE);
             }
-        }
-        mutex_unlock(openthread_get_buffer_mutex());		
+        }		
 
         if (message != NULL) {
             DEBUG("\n[Main] Tx UDP packet %u\n", buf[3]*256+buf[4]);
