@@ -26,7 +26,7 @@
 #include "periph/spi.h"
 
 #ifndef SAMPLE_INTERVAL
-#define SAMPLE_INTERVAL (30000000UL)
+#define SAMPLE_INTERVAL (10000000UL)
 #endif
 #define SAMPLE_JITTER   SAMPLE_INTERVAL/2
 #define PAYLOAD_SIZE (75)
@@ -97,12 +97,12 @@ static otMessage *message = NULL;
 
 static kernel_pid_t _main_pid;
 
-xtimer_t end_timer;
+/*xtimer_t end_timer;
 
 static void end_timer_cb(void* arg) {
     printf("END\n");
     while(1){}
-}
+}*/
 
 /*void otUdpReceive(void *aContext, otMessage *aMessage, const otMessageInfo *aMessageInfo) {
     msg_t msg;
@@ -113,7 +113,7 @@ int main(void)
 {
     _main_pid = thread_getpid();
 
-    end_timer.callback = end_timer_cb;
+    //end_timer.callback = end_timer_cb;
 
     for(int i=0; i<11; i++) {
         packetReTxArray[i] = 0;
@@ -125,8 +125,8 @@ int main(void)
     i2c_set_dma_channel(I2C_0,DMAC_CHANNEL_I2C);
     spi_set_dma_channel(0,DMAC_CHANNEL_SPI_TX,DMAC_CHANNEL_SPI_RX);
 #endif 
-    DEBUG("This a test for OpenThread\n");    
-    xtimer_usleep(120000000ul);
+    DEBUG("This a test for OpenThread\n");
+    xtimer_usleep(300000000ul);
 
     DEBUG("\n[Main] Start UDP\n");
 	otError error;
@@ -138,6 +138,8 @@ int main(void)
 	//otIp6AddressFromString("fdde:ad00:beef:0000:ba92:be52:ce6f:7670", &messageInfo.mPeerAddr);
     // Testbed node 10
 	otIp6AddressFromString("fdde:ad00:beef:0000:8a1e:671f:0402:fdbe", &messageInfo.mPeerAddr);
+	//otIp6AddressFromString("fe80:0000:0000:0000:1069:1cdc:cf14:6752", &messageInfo.mPeerAddr);
+
     // Testbed node 17
     //otIp6AddressFromString("fdde:ad00:beef:0000:c684:4ab6:ac8f:9fe5", &messageInfo.mPeerAddr);
 	messageInfo.mPeerPort = 1234;
@@ -147,9 +149,9 @@ int main(void)
         buf[i] = 0x0;
     }
     
-    xtimer_set(&end_timer, 60000000ul);
+    /*xtimer_set(&end_timer, 60000000ul);
     uint32_t last_wakeup = xtimer_now_usec();
-    uint32_t now = xtimer_now_usec();
+    uint32_t now = xtimer_now_usec();*/
     cpuOnTime = 0;
     cpuOffTime = 0;
 
@@ -158,12 +160,12 @@ int main(void)
 	    //sample(&frontbuf);
 
 		//Sleep
-        //xtimer_usleep(interval_with_jitter());        
-        now = xtimer_now_usec();
+        xtimer_usleep(interval_with_jitter());        
+        /*now = xtimer_now_usec();
         if (now - last_wakeup < SAMPLE_INTERVAL) {
             xtimer_usleep(SAMPLE_INTERVAL - (now-last_wakeup));
         }
-        last_wakeup = xtimer_now_usec();
+        last_wakeup = xtimer_now_usec();*/
 
         /* Identity */
         buf[0] = source;

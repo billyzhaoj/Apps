@@ -98,7 +98,7 @@ int main(void)
 
     /* Run wpantund to interact with NCP */
     DEBUG("This a test for OpenThread NCP\n");    
-    xtimer_usleep(120000000ul);
+    xtimer_usleep(300000000ul);
 
     DEBUG("\n[Main] Start UDP\n");
 	otError error;
