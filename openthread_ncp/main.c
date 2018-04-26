@@ -19,6 +19,7 @@
 #include <openthread/cli.h>
 #include <openthread/openthread.h>
 #include "sched.h"
+#include "periph/gpio.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
@@ -74,6 +75,11 @@ uint32_t totalSerialMsgCnt = 0;
 #define SAMPLE_JITTER   SAMPLE_INTERVAL/2
 #define PAYLOAD_SIZE (75)
 
+#define D1_PIN GPIO_PIN(0, 27)
+#define D2_PIN GPIO_PIN(1, 23)
+#define D3_PIN GPIO_PIN(1, 22)
+#define D5_PIN GPIO_PIN(0, 23)
+
 static uint8_t source = OPENTHREAD_SOURCE;
 static char buf[PAYLOAD_SIZE];
 static uint32_t AppPacketLostCnt = 0;
@@ -82,6 +88,7 @@ static otUdpSocket mSocket;
 static otMessageInfo messageInfo;
 static otMessage *message = NULL;
 
+static bool led_on = false;
 uint32_t interval_with_jitter(void)
 {
     int32_t t = SAMPLE_INTERVAL/2;
@@ -90,8 +97,59 @@ uint32_t interval_with_jitter(void)
     return (uint32_t)t;
 }
 
+void wdt_clear(void) {
+    volatile uint8_t* wdt_status = (volatile uint8_t*) 0x40001007;
+    volatile uint8_t* wdt_clear = (volatile uint8_t*) 0x40001008;
+
+    while (*wdt_status);
+    *wdt_clear = 0xA5;
+    while (*wdt_status);
+    if (led_on) {
+        gpio_clear(D5_PIN);
+        led_on = false;
+    } else {
+        gpio_set(D5_PIN);
+        led_on = true;
+    }
+}
+
+void wdt_setup(void) {
+    /* Enable the bus for WDT and PAC0. */
+    volatile uint32_t* pm_apbamask = (volatile uint32_t*) 0x40000418;
+    *pm_apbamask = 0x0000007f;
+
+    /* Setup GCLK_WDT at (32 kHz) / (2 ^ (7 + 1)) = 128 Hz. */
+    GCLK->GENDIV.reg  = (GCLK_GENDIV_ID(3)  | GCLK_GENDIV_DIV(7));
+    GCLK->GENCTRL.reg = (GCLK_GENCTRL_ID(3) | GCLK_GENCTRL_GENEN | GCLK_GENCTRL_DIVSEL | GCLK_GENCTRL_RUNSTDBY |
+                         GCLK_GENCTRL_SRC_OSCULP32K);
+    while (GCLK->STATUS.bit.SYNCBUSY);
+
+    GCLK->CLKCTRL.reg = (GCLK_CLKCTRL_GEN(3) | GCLK_CLKCTRL_CLKEN | GCLK_CLKCTRL_ID(GCLK_CLKCTRL_ID_WDT_Val));
+    while (GCLK->STATUS.bit.SYNCBUSY);
+
+    volatile uint8_t* wdt_status = (volatile uint8_t*) 0x40001007;
+    volatile uint8_t* wdt_config = (volatile uint8_t*) 0x40001001;
+    volatile uint8_t* wdt_ctrl = (volatile uint8_t*) 0x40001000;
+
+    while (*wdt_status);
+    /* Set up the WDT to reset after 4096 cycles (32 s), if not cleared. */
+    *wdt_config = 0x09;
+    while (*wdt_status);
+    *wdt_ctrl = 0x02;
+    while (*wdt_status);
+}
+
 int main(void)
 {
+    /* Set up the watchdog before anything else */
+    wdt_setup();
+
+    /* Initialize gpio pins */
+    gpio_init(D1_PIN, GPIO_OUT);
+    gpio_init(D2_PIN, GPIO_OUT);
+    gpio_init(D3_PIN, GPIO_OUT);
+    gpio_init(D5_PIN, GPIO_OUT);
+
     for(int i=0; i<11; i++) {
         packetReTxArray[i] = 0;
     }
