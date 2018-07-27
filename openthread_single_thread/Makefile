@@ -28,18 +28,14 @@ ifeq ($(OPENTHREAD_TYPE),mtd)
     # routerrole on an MTD. At the same time, an MTD may or may not be sleepy.
     USEMODULE += openthread-mtd
     USEMODULE += openthread-cli-mtd
-    BOARD ?= hamilton
+    BOARD ?= samr21-xpro
     CFLAGS += -DSMART_IDLE_LISTENING=1
-    CFLAGS += -DCLOCK_USE_ADAPTIVE=1
-    CFLAGS += -DCLOCK_USE_OSCULP32_DFLL=0
 else
     # ftd: A Full Thread Device has router functionality compiled in
     USEMODULE += openthread-ftd
     USEMODULE += openthread-cli-ftd
     BOARD ?= samr21-xpro
     CFLAGS += -DSMART_IDLE_LISTENING=0
-    #BOARD ?= hamilton
-    #CFLAGS += -DCLOCK_USE_PLL=1
 endif
 
 CFLAGS += -DHIGH_DATA_RATE=1
@@ -74,13 +70,16 @@ ifneq (,$(filter at86rf2%,$(DRIVER)))
 endif
 
 USEMODULE += $(DRIVER)
-USEMODULE += schedstatistics
 CFLAGS    += -DDEVELHELP
+USEMODULE += schedstatistics
 
 # CPU clock speed
 ifneq (,$(filter hamilton,$(BOARD)))
   CFLAGS    += -DSENSOR_COMPUTOFFLOAD=1
   CFLAGS    += -DDMAC_ENABLE=0
+  #CFLAGS    += -DCLOCK_USE_ADAPTIVE=1
+  CFLAGS    += -DCLOCK_USE_OSCULP32_DFLL=1
+
   # Sensors
   USEMODULE += saul_reg        # SAUL: sensor/actuator abstraction layer 
   USEMODULE += auto_init_saul  
