@@ -28,7 +28,7 @@ ifeq ($(OPENTHREAD_TYPE),mtd)
     # routerrole on an MTD. At the same time, an MTD may or may not be sleepy.
     USEMODULE += openthread-mtd
     USEMODULE += openthread-cli-mtd
-    BOARD ?= samr21-xpro
+    BOARD ?= hamilton
     CFLAGS += -DSMART_IDLE_LISTENING=1
 else
     # ftd: A Full Thread Device has router functionality compiled in
@@ -48,6 +48,7 @@ OPENTHREAD_PANID ?= 0xbeef
 OPENTHREAD_CHANNEL ?= 26
 OPENTHREAD_TXPOWER ?= 4
 OPENTHREAD_UART_BAUDRATE ?= 115200
+OPENTHREAD_FINEGRAINED_LOCK ?= 0
 SAMPLE_INTERVAL ?= 30000000
 
 CFLAGS += -DOPENTHREAD_PANID=${OPENTHREAD_PANID}
@@ -56,6 +57,7 @@ CFLAGS += -DOPENTHREAD_TXPOWER=${OPENTHREAD_TXPOWER}
 CFLAGS += -DOPENTHREAD_UART_BAUDRATE=${OPENTHREAD_UART_BAUDRATE}
 CFLAGS += -DOPENTHREAD_SOURCE=${HOSTNAME}
 CFLAGS += -DSAMPLE_INTERVAL=${SAMPLE_INTERVAL}
+CFLAGS += -DOPENTHREAD_FINEGRAINED_LOCK=${OPENTHREAD_FINEGRAINED_LOCK}
 
 ifneq (,$(filter hamilton samr21-xpro,$(BOARD)))
   DRIVER := at86rf233
@@ -81,14 +83,14 @@ ifneq (,$(filter hamilton,$(BOARD)))
   CFLAGS    += -DCLOCK_USE_OSCULP32_DFLL=1
 
   # Sensors
-  USEMODULE += saul_reg        # SAUL: sensor/actuator abstraction layer 
-  USEMODULE += auto_init_saul  
-  USEMODULE += tmp006          # ambient temperature
-  USEMODULE += hdc1000         # humidity and temperature
-  USEMODULE += fxos8700        # acceleration and magnetic field
-  USEMODULE += apds9007        # illumination
-  USEMODULE += ekmb            # pir-based occupancy
-  USEMODULE += pulse_counter   # simple button
+  #USEMODULE += saul_reg        # SAUL: sensor/actuator abstraction layer 
+  #USEMODULE += auto_init_saul  
+  #USEMODULE += tmp006          # ambient temperature
+  #USEMODULE += hdc1000         # humidity and temperature
+  #USEMODULE += fxos8700        # acceleration and magnetic field
+  #USEMODULE += apds9007        # illumination
+  #USEMODULE += ekmb            # pir-based occupancy
+  #USEMODULE += pulse_counter   # simple button
 endif
 
 USEMODULE += xtimer
