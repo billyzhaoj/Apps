@@ -7,7 +7,7 @@ APPLICATION = openthread
 BOARD_WHITELIST := hamilton samr21-xpro iotlab-m3 fox iotlab-a8-m3
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE = /root/RIOT-OS
+RIOTBASE = /home/ubuntu/testbed/RIOT-OS/
 
 # This is to set the proper programmer for board
 PROGRAMMER ?= jlink

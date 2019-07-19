@@ -26,12 +26,12 @@
 #include "periph/spi.h"
 
 #ifndef SAMPLE_INTERVAL
-#define SAMPLE_INTERVAL (10000000UL)
+#define SAMPLE_INTERVAL (20000000UL)
 #endif
 #define SAMPLE_JITTER   SAMPLE_INTERVAL/2
 #define PAYLOAD_SIZE (75)
 
-#define ENABLE_DEBUG (0)
+#define ENABLE_DEBUG (1)
 #include "debug.h"
 
 uint32_t interval_with_jitter(void)
