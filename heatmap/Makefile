@@ -20,7 +20,7 @@ PROGRAMMER ?= jlink
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
-#USEPKG += openthread
+USEPKG += openthread
 OPENTHREAD_TYPE ?= ftd
 ifeq ($(OPENTHREAD_TYPE),mtd)
     # MTD: A Minimal Thread Device does not have router functionality
