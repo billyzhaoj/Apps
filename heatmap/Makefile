@@ -1,4 +1,4 @@
-APPLICATION = openthread
+APPLICATION = heatmap 
 
 # If no BOARD is found in the environment, use this default:
 #BOARD ?= hamilton
@@ -7,7 +7,7 @@ APPLICATION = openthread
 BOARD_WHITELIST := hamilton samr21-xpro iotlab-m3 fox iotlab-a8-m3
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE = /home/billy/Research/RIOT-OS/
+RIOTBASE = /home/billy/Research/RIOT-OS
 
 # This is to set the proper programmer for board
 PROGRAMMER ?= jlink
@@ -20,7 +20,7 @@ PROGRAMMER ?= jlink
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
-USEPKG += openthread
+#USEPKG += openthread
 OPENTHREAD_TYPE ?= ftd
 ifeq ($(OPENTHREAD_TYPE),mtd)
     # MTD: A Minimal Thread Device does not have router functionality
@@ -60,7 +60,7 @@ CFLAGS += -DOPENTHREAD_TXPOWER=${OPENTHREAD_TXPOWER}
 CFLAGS += -DOPENTHREAD_UART_BAUDRATE=${OPENTHREAD_UART_BAUDRATE}
 CFLAGS += -DOPENTHREAD_SOURCE=${HOSTNAME}
 CFLAGS += -DSAMPLE_INTERVAL=${SAMPLE_INTERVAL}
-
+CFLAGS += -O0
 ifneq (,$(filter hamilton samr21-xpro,$(BOARD)))
   DRIVER := at86rf233
   CFLAGS    += -DAUTO_CSMA_EN=1
