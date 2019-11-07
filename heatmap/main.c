@@ -47,7 +47,7 @@ int main(void)
     spi_set_dma_channel(0,DMAC_CHANNEL_SPI_TX,DMAC_CHANNEL_SPI_RX);
 #endif 
     DEBUG("This a test for OpenThread\n");
-    xtimer_usleep(300000ul);
+    xtimer_usleep(3000ul);
     xtimer_ticks32_t last_wakeup = xtimer_now(); 
     netdev_t* netdev =  openthread_get_netdev();
     uint8_t chan = CHANNEL_OFFSET; 
@@ -56,7 +56,7 @@ int main(void)
         xtimer_periodic_wakeup(&last_wakeup, INTERVAL);
         otError err = otLinkSetChannel(openthread_get_instance(), chan);
         DEBUG("otError: %d \n", err);
-        state = AT86RF2XX_STATE_RX_ON;
+        state = NETOPT_STATE_IDLE;
         netdev->driver->set(netdev, NETOPT_STATE, &state,sizeof(state));
         netdev->driver->get(netdev, NETOPT_STATE, &state,sizeof(state));
         DEBUG("NETOPT STATE: %d\n", state);
