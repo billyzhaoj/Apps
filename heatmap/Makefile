@@ -7,7 +7,7 @@ APPLICATION = heatmap
 BOARD_WHITELIST := hamilton samr21-xpro iotlab-m3 fox iotlab-a8-m3
 
 # This has to be the absolute path to the RIOT base directory:
-RIOTBASE = /home/billy/Research/RIOT-OS
+RIOTBASE = /home/ubuntu/testbed/RIOT-OS
 
 # This is to set the proper programmer for board
 PROGRAMMER ?= jlink
@@ -20,27 +20,27 @@ PROGRAMMER ?= jlink
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
-USEPKG += openthread
-OPENTHREAD_TYPE ?= ftd
-ifeq ($(OPENTHREAD_TYPE),mtd)
-    # MTD: A Minimal Thread Device does not have router functionality
-    # compiled in. As a result, it is not necessary to configure the
-    # routerrole on an MTD. At the same time, an MTD may or may not be sleepy.
-    USEMODULE += openthread-mtd
-    USEMODULE += openthread-cli-mtd
-    BOARD ?= hamilton
-    CFLAGS += -DSMART_IDLE_LISTENING=1
-    CFLAGS += -DCLOCK_USE_ADAPTIVE=1
-    CFLAGS += -DCLOCK_USE_OSCULP32_DFLL=0
-else
-    # ftd: A Full Thread Device has router functionality compiled in
-    USEMODULE += openthread-ftd
-    USEMODULE += openthread-cli-ftd
+#USEPKG += openthread
+#OPENTHREAD_TYPE ?= ftd
+#ifeq ($(OPENTHREAD_TYPE),mtd)
+#    # MTD: A Minimal Thread Device does not have router functionality
+#    # compiled in. As a result, it is not necessary to configure the
+#    # routerrole on an MTD. At the same time, an MTD may or may not be sleepy.
+#    USEMODULE += openthread-mtd
+#    USEMODULE += openthread-cli-mtd
+#    BOARD ?= hamilton
+#    CFLAGS += -DSMART_IDLE_LISTENING=1
+#    CFLAGS += -DCLOCK_USE_ADAPTIVE=1
+#    CFLAGS += -DCLOCK_USE_OSCULP32_DFLL=0
+#else
+#    # ftd: A Full Thread Device has router functionality compiled in
+#    USEMODULE += openthread-ftd
+#    USEMODULE += openthread-cli-ftd
     BOARD ?= samr21-xpro
     CFLAGS += -DSMART_IDLE_LISTENING=0
-    #BOARD ?= hamilton
-    #CFLAGS += -DCLOCK_USE_PLL=1
-endif
+#    #BOARD ?= hamilton
+#    #CFLAGS += -DCLOCK_USE_PLL=1
+#endif
 
 CFLAGS += -DHIGH_DATA_RATE=1
 CFLAGS += -DBUSYWAIT=0
